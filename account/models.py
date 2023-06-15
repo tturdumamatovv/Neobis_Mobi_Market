@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+from django.contrib.auth.models import User
+
+User.objects.create_superuser(username='admin', email='admin@example.com', password='1')
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, password=None, **extra_fields):
