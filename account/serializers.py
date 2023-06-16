@@ -65,11 +65,11 @@ class LoginSerializer(serializers.ModelSerializer):
 
 
 class RegisterUpdateSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(read_only=True)
+    email = serializers.ReadOnlyField()
 
     class Meta:
         model = CustomUser
-        fields = ('photo', 'first_name', 'last_name', 'patronymic', 'date_of_birth', 'phone_number')
+        fields = ('photo', 'first_name', 'last_name', 'patronymic', 'date_of_birth', 'phone_number', 'email')
 
     def update(self, instance, validated_date):
         instance.photo = validated_date.get('photo', instance.photo)
