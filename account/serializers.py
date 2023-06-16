@@ -78,7 +78,6 @@ class RegisterUpdateSerializer(serializers.ModelSerializer):
         instance.patronymic = validated_date.get('patronymic', instance.patronymic)
         instance.date_of_birth = validated_date.get('date_of_birth', instance.date_of_birth)
         instance.phone_number = validated_date.get('phone_number', instance.phone_number)
-        instance.email = validated_date.get('email', instance.email)
 
         instance.save()
 
