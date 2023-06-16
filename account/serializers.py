@@ -65,6 +65,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 
 class RegisterUpdateSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only=True)
 
     class Meta:
         model = CustomUser
