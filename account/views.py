@@ -24,10 +24,10 @@ class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        first_name = request.data['username']
+        username = request.data['username']
         password = request.data['password']
 
-        user = CustomUser.objects.filter(first_name=first_name).first()
+        user = CustomUser.objects.filter(username=username).first()
 
         if user is None:
             raise AuthenticationFailed('User not found')
