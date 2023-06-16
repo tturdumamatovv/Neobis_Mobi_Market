@@ -24,7 +24,7 @@ class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        first_name = request.data['first_name']
+        first_name = request.data['username']
         password = request.data['password']
 
         user = CustomUser.objects.filter(first_name=first_name).first()
