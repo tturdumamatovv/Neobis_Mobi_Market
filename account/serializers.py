@@ -69,13 +69,12 @@ class RegisterUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('photo', 'first_name', 'last_name', 'patronymic', 'date_of_birth', 'phone_number', 'email')
+        fields = ('photo', 'first_name', 'last_name', 'date_of_birth', 'phone_number', 'email')
 
     def update(self, instance, validated_date):
         instance.photo = validated_date.get('photo', instance.photo)
         instance.first_name = validated_date.get('first_name', instance.first_name)
         instance.last_name = validated_date.get('last_name', instance.last_name)
-        instance.patronymic = validated_date.get('patronymic', instance.patronymic)
         instance.date_of_birth = validated_date.get('date_of_birth', instance.date_of_birth)
         instance.phone_number = validated_date.get('phone_number', instance.phone_number)
 
