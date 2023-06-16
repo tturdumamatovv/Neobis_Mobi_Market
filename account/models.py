@@ -22,10 +22,10 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=255, unique=True)
-    photo = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    username = models.CharField(unique=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
-    patronymic = models.CharField(max_length=255, null=True, blank=True)
+    photo = models.ImageField(upload_to='profiles/', null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
 
@@ -35,7 +35,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name']
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.email
