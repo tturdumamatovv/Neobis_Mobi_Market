@@ -3,17 +3,17 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, first_name, password=None, **extra_fields):
+    def create_user(self, email, username, password=None, **extra_fields):
         if not email:
             raise ValueError('The email field should be set!')
         email = self.normalize_email(email)
-        user = self.model(email=email, first_name=first_name, **extra_fields)
+        user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, first_name, password=None, **extra_fields):
-        user = self.create_user(email, first_name, password, **extra_fields)
+    def create_superuser(self, email, username, password=None, **extra_fields):
+        user = self.create_user(email, username, password, **extra_fields)
         user.is_staff = True
         user.is_superuser = True
         user.save()
