@@ -5,6 +5,7 @@ from rest_framework import status, generics
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import RegistrationSerializer, LoginSerializer, RegisterUpdateSerializer
+from .models import CustomUser
 
 from drf_yasg.utils import swagger_auto_schema
 
