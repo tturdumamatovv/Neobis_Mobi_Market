@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 
-from .models import CustomUser
+from .models import CustomUser, VerifyPhone
 
 
 def validate_password_characters(value):
@@ -69,17 +69,28 @@ class RegisterUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('photo', 'first_name', 'last_name', 'username', 'date_of_birth', 'phone_number', 'email')
+        fields = ('photo', 'first_name', 'last_name', 'username', 'date_of_birth', 'email')
 
-    def update(self, instance, validated_date):
-        instance.photo = validated_date.get('photo', instance.photo)
-        instance.first_name = validated_date.get('first_name', instance.first_name)
-        instance.last_name = validated_date.get('last_name', instance.last_name)
-        instance.username = validated_date.get('username', instance.username)
-        instance.date_of_birth = validated_date.get('date_of_birth', instance.date_of_birth)
-        instance.phone_number = validated_date.get('phone_number', instance.phone_number)
+    def update(self, instance, validated_data):
+        instance.photo = validated_data.get('photo', instance.photo)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.username = validated_data.get('username', instance.username)
+        instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
 
         instance.save()
 
         return instance
 
+
+class SendCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['phone_number']
+
+    def update(self, instance, validated_data):
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+
+        instance.save()
+
+        return instance

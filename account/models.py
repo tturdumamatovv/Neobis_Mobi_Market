@@ -29,6 +29,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
+    is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -39,3 +40,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class VerifyPhone(models.Model):
+    phone = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, unique=True)
