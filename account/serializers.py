@@ -1,8 +1,11 @@
 from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 
-from .models import CustomUser, VerifyPhone
+from .models import (
+    CustomUser,
+    Product
+)
+
 
 
 def validate_password_characters(value):
@@ -94,3 +97,10 @@ class SendCodeSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'
+        read_only_fields = ('id', 'owner')

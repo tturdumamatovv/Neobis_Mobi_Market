@@ -1,5 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin
+)
 
 
 class CustomUserManager(BaseUserManager):
@@ -45,3 +49,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class VerifyPhone(models.Model):
     phone = models.CharField(max_length=255)
     code = models.CharField(max_length=255, unique=True)
+
+
+class Product(models.Model):
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    photo = models.ImageField(upload_to='products/', null=True, blank=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name

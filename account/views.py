@@ -1,19 +1,32 @@
+import random
+import string
+
+from django.conf import settings
+
 from rest_framework.exceptions import AuthenticationFailed, NotAcceptable
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics, exceptions
+from rest_framework import status, generics, exceptions, permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import RegistrationSerializer, LoginSerializer, RegisterUpdateSerializer, SendCodeSerializer
-from .models import CustomUser, VerifyPhone
-
 from twilio.rest import Client
-from django.conf import settings
 
 from drf_yasg.utils import swagger_auto_schema
 
-import random
-import string
+from .serializers import (
+    RegistrationSerializer,
+    LoginSerializer,
+    RegisterUpdateSerializer,
+    SendCodeSerializer,
+    ProductSerializer
+)
+from .models import (
+    CustomUser,
+    VerifyPhone,
+    Product
+)
+
+from .permissions import IsVerifiedOrReadOnly
 
 
 class RegistrationAPIView(APIView):
@@ -121,3 +134,23 @@ class PhoneVerifyView(APIView):
         return Response({
             'message': 'You successfully verified your phone number'
         })
+
+
+
+class ProductListCreateView(generics.ListCreateAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated, IsVerifiedOrReadOnly]
+
+    def get_queryset(self):
+        # Only return products of the authenticated user
+        return Product.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        # Set the owner of the product as the authenticated user
+        serializer.save(owner=self.request.user)
+
+
+class ProductRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated, IsVerifiedOrReadOnly]
