@@ -20,15 +20,17 @@ from .serializers import (
     RegisterUpdateSerializer,
     SendCodeSerializer,
     ProductSerializer,
+    FavoriteSerializer
 )
 from .models import (
     CustomUser,
     VerifyPhone,
     Product,
-    ProductLike
+    ProductLike,
+    Favorite
 )
 
-from .permissions import IsVerifiedOrReadOnly
+from .permissions import IsVerifiedOrReadOnly, IsOwnerOrReadOnly
 
 
 class RegistrationAPIView(APIView):
@@ -196,3 +198,21 @@ class ProductUnlikeAPIView(APIView):
         ProductLike.objects.filter(product=product, user=user).delete()
 
         return Response({'message': 'Product unliked successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class FavoriteListCreateView(generics.ListCreateAPIView):
+    serializer_class = FavoriteSerializer
+    permission_classes = [permissions.IsAuthenticated, IsVerifiedOrReadOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Favorite.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class FavoriteRetrieveDestroyView(generics.RetrieveDestroyAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
