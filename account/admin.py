@@ -1,6 +1,8 @@
 from django.contrib import admin
-from .models import CustomUser
+from .models import CustomUser, Product, ProductLike
 
 admin.site.register(CustomUser)
 
-# Register your models here.
+admin.site.register(Product)
+
+admin.site.register(ProductLike)

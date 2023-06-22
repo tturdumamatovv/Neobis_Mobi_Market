@@ -2,6 +2,7 @@ import random
 import string
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.exceptions import AuthenticationFailed, NotAcceptable
 from rest_framework.views import APIView
@@ -18,12 +19,13 @@ from .serializers import (
     LoginSerializer,
     RegisterUpdateSerializer,
     SendCodeSerializer,
-    ProductSerializer
+    ProductSerializer,
 )
 from .models import (
     CustomUser,
     VerifyPhone,
-    Product
+    Product,
+    ProductLike
 )
 
 from .permissions import IsVerifiedOrReadOnly
@@ -143,7 +145,7 @@ class ProductListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         # Only return products of the authenticated user
-        return Product.objects.filter(owner=self.request.user)
+        return Product.objects.all()
 
     def perform_create(self, serializer):
         # Set the owner of the product as the authenticated user
@@ -154,3 +156,43 @@ class ProductRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated, IsVerifiedOrReadOnly]
+
+
+class ProductLikeAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsVerifiedOrReadOnly]
+
+    def post(self, request, product_id):  # Modify parameter name from pk to product_id
+        user = request.user
+        try:
+            product = Product.objects.get(id=product_id)
+        except ObjectDoesNotExist:
+            return Response({'message': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the user has already liked the product
+        if product.likes.filter(id=user.id).exists():
+            return Response({'message': 'You have already liked this product'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new ProductLike instance
+        ProductLike.objects.create(product=product, user=user)
+
+        return Response({'message': 'Product liked successfully'}, status=status.HTTP_201_CREATED)
+
+
+class ProductUnlikeAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsVerifiedOrReadOnly]
+
+    def delete(self, request, product_id):  # Modify parameter name from pk to product_id
+        user = request.user
+        try:
+            product = Product.objects.get(id=product_id)
+        except ObjectDoesNotExist:
+            return Response({'message': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the user has liked the product
+        if not product.likes.filter(id=user.id).exists():
+            return Response({'message': 'You have not liked this product'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Delete the ProductLike instance
+        ProductLike.objects.filter(product=product, user=user).delete()
+
+        return Response({'message': 'Product unliked successfully'}, status=status.HTTP_204_NO_CONTENT)

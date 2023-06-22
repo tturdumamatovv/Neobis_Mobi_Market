@@ -3,7 +3,8 @@ from rest_framework.exceptions import ValidationError
 
 from .models import (
     CustomUser,
-    Product
+    Product,
+    ProductLike
 )
 
 
@@ -99,8 +100,35 @@ class SendCodeSerializer(serializers.ModelSerializer):
         return instance
 
 
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('username',)
+
+
 class ProductSerializer(serializers.ModelSerializer):
+    like_count = serializers.SerializerMethodField()
+    likes = LikeSerializer(read_only=True, many=True)
+
     class Meta:
         model = Product
-        fields = '__all__'
-        read_only_fields = ('id', 'owner')
+        fields = ["id", "like_count", "name", "price", "photo", "description", "owner", "likes"]
+        read_only_fields = ('id', 'owner', 'like_count')
+
+    def get_like_count(self, obj):
+        return obj.like_count
+
+
+# class ProductLikeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProductLike
+#         fields = '__all__'
+#
+#     def validate(self, attrs):
+#         product = attrs['product']
+#         user = self.context['request'].user
+#
+#         if ProductLike.objects.filter(product=product, user=user).exists():
+#             raise serializers.ValidationError('You have already liked this product.')
+#
+#         return attrs

@@ -7,7 +7,10 @@ from .views import (
     SendCodeView,
     PhoneVerifyView,
     ProductListCreateView,
-    ProductRetrieveUpdateDestroyView
+    ProductRetrieveUpdateDestroyView,
+    # ProductLikeCreateView,
+    ProductLikeAPIView,
+    ProductUnlikeAPIView
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -22,4 +25,7 @@ urlpatterns = [
     path('verify_phone/', PhoneVerifyView.as_view(), name='verify_phone'),
     path('products/', ProductListCreateView.as_view(), name='product-list-create'),
     path('products/<int:pk>/', ProductRetrieveUpdateDestroyView.as_view(), name='product-detail'),
+    # path('products/<int:pk>/like/', ProductLikeCreateView.as_view(), name='product-like'),
+    path('products/<int:product_id>/like/', ProductLikeAPIView.as_view(), name='product-likes'),
+    path('products/<int:product_id>/unlike/', ProductUnlikeAPIView.as_view(), name='product-unlike')
 ]
