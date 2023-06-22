@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import AuthenticationFailed, NotAcceptable
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics, exceptions, permissions
+from rest_framework import status, generics, exceptions, permissions, serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from twilio.rest import Client
@@ -209,7 +209,13 @@ class FavoriteListCreateView(generics.ListCreateAPIView):
         return Favorite.objects.filter(user=user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        user = self.request.user
+        product_id = self.request.data.get('product')
+
+        if Favorite.objects.filter(user=user, product_id=product_id).exists():
+            raise serializers.ValidationError('This product is already in your favorites')
+
+        serializer.save(user=user)
 
 
 class FavoriteRetrieveDestroyView(generics.RetrieveDestroyAPIView):
