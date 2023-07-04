@@ -112,7 +112,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", "like_count", "name", "price", "photo", "description", "owner", "likes"]
+        fields = ["id", "like_count", "name", "price", "photo", "full_description", "short_description", "owner", "likes"]
         read_only_fields = ('id', 'owner', 'like_count')
 
     def get_like_count(self, obj):

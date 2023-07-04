@@ -56,7 +56,8 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     photo = models.ImageField(upload_to='products/', null=True, blank=True)
-    description = models.TextField()
+    full_description = models.TextField()
+    short_description = models.TextField()
     likes = models.ManyToManyField(CustomUser, through='ProductLike', related_name='liked_product')
 
     def __str__(self):
